@@ -265,3 +265,16 @@ The script checks for that version's `RevitAPI.dll` and `RevitAPIUI.dll`, genera
 ## License
 
 No license file was present in the repository when this README was updated. Unless a license is added, do not assume that the source is licensed for unrestricted redistribution or commercial reuse.
+
+
+## Windows GUI: choose a Revit version
+
+A Windows x64 desktop selector is included under `tools/RevitVersionSelector/`. It lets users choose Revit 2020–2027, select their local repository folder, and run the version-specific build script with live output.
+
+Build the single-file, self-contained launcher on Windows with the .NET 10 SDK:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\scripts\Build-Version-Selector-EXE.ps1"
+```
+
+The executable is created at `dist\RevitVersionSelector\RevitVersionSelector.exe`. This repository stores the source and publishing script; the EXE is not yet a checked-in or prebuilt binary. The launcher does not bundle Revit API assemblies or the SDK needed to compile the selected add-in. See [the selector README](tools/RevitVersionSelector/README.md).
