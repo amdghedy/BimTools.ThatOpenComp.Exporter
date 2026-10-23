@@ -5,8 +5,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "tools/RevitVersionSelector/**"
-      - "scripts/Build-Version-Selector-EXE.ps1"
+      - "Source File/tools/RevitVersionSelector/**"
+      - "Source File/scripts/Build-Version-Selector-EXE.ps1"
       - ".github/workflows/build-version-selector.yml"
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
       - name: Publish self-contained Windows x64 EXE
         shell: pwsh
         run: |
-          ./scripts/Build-Version-Selector-EXE.ps1
+          ./"Source File"/scripts/Build-Version-Selector-EXE.ps1
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
