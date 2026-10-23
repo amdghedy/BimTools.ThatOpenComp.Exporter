@@ -85,8 +85,8 @@ internal sealed class MainForm : Form
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
             repoPath.Text = dialog.SelectedPath;
-            var script = Path.Combine(dialog.SelectedPath, "scripts", "Build-All-Revit-Versions.ps1");
-            status.Text = File.Exists(script) ? "Build script found." : "Could not find scripts\\Build-All-Revit-Versions.ps1 in this folder.";
+            var script = Path.Combine(dialog.SelectedPath, "Source File", "scripts", "Build-All-Revit-Versions.ps1");
+            status.Text = File.Exists(script) ? "Build script found." : "Could not find Source File\\scripts\\Build-All-Revit-Versions.ps1 in this folder.";
         }
     }
 
@@ -99,7 +99,7 @@ internal sealed class MainForm : Form
         }
 
         var root = repoPath.Text.Trim().Trim('"');
-        var script = Path.Combine(root, "scripts", "Build-All-Revit-Versions.ps1");
+        var script = Path.Combine(root, "Source File", "scripts", "Build-All-Revit-Versions.ps1");
         if (!Directory.Exists(root) || !File.Exists(script))
         {
             MessageBox.Show(this, "Browse to the repository root containing scripts\\Build-All-Revit-Versions.ps1.", "Repository not found", MessageBoxButtons.OK, MessageBoxIcon.Warning);
