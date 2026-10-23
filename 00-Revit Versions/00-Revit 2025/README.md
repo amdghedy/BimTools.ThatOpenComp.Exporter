@@ -2,7 +2,7 @@
 
 - Revit API directory: `C:\Program Files\Autodesk\Revit 2025`
 - Target framework: .NET 8 for Windows (`net8.0-windows`)
-- Output: `artifacts/Revit2025/`
+- Output: `00-Revit Versions/00-Revit 2025/Build Output/`
 
 Run from the repository root: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Build-All-Revit-Versions.ps1 -Versions 2025`
 
