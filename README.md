@@ -215,7 +215,7 @@ The build script runs TypeScript checking and Vite bundling. The current `serve.
 - No automated test suite or CI workflow is currently documented in the repository. Build and validate with a representative host model and linked models before production use.
 
 
-## Multi-version Revit build targets (2020–2026)
+## Multi-version Revit build targets (2020–2027)
 
 Version-specific target notes are organized under **`00-Revit Versions/`**. Each folder starts with `00-` and documents its expected Revit API directory, .NET target, and build command.
 
@@ -249,9 +249,9 @@ If Revit is installed in a non-default location, provide its common parent direc
 .\\scripts\\Build-All-Revit-Versions.ps1 -RevitInstallRoot "D:\\Autodesk" -ContinueOnError
 ```
 
-The script checks for that version's `RevitAPI.dll` and `RevitAPIUI.dll`, generates a temporary SDK-style project using the appropriate framework, builds the add-in, and writes version-specific outputs under `00-Revit Versions/00-Revit 2020/Build Output` through `00-Revit Versions/00-Revit 2026/Build Output`. Successful outputs include `TOCExporter.dll` and a generated `TOCExporter.addin` manifest. It also writes `artifacts/Build-Summary.csv`; versions whose API assemblies are missing are marked **SKIPPED** rather than falsely reported as built.
+The script checks for that version's `RevitAPI.dll` and `RevitAPIUI.dll`, generates a temporary SDK-style project using the appropriate framework, builds the add-in, and writes version-specific outputs under `00-Revit Versions/00-Revit 2020/Build Output` through `00-Revit Versions/00-Revit 2027/Build Output`. Successful outputs include `TOCExporter.dll` and a generated `TOCExporter.addin` manifest. It also writes `artifacts/Build-Summary.csv`; versions whose API assemblies are missing are marked **SKIPPED** rather than falsely reported as built.
 
-**Prerequisites:** install each Revit version you intend to build against, the .NET SDK, and (for Revit 2020–2024) the .NET Framework reference assemblies/targeting packs. The script may need internet access to restore the reference-assemblies NuGet package. Revit 2025 and 2026 require a .NET 8 SDK. Revit API DLLs are not bundled in this repository.
+**Prerequisites:** install each Revit version you intend to build against, the .NET SDK, and (for Revit 2020–2024) the .NET Framework reference assemblies/targeting packs. The script may need internet access to restore the reference-assemblies NuGet package. Revit 2025 and 2026 require a .NET 8 SDK; Revit 2027 requires the .NET 10 SDK (Autodesk documents SDK 10.0.100 for Revit 2027). Revit API DLLs are not bundled in this repository.
 
 **Important:** this is a multi-version build scaffold, not proof that every version compiles or runs. The original exporter code was authored against Revit 2020 API references; API changes, runtime behavior, and IFC export behavior must be verified separately in each Revit version. The generated manifests point to the build output location, so copy/update the manifest and assembly paths for your final deployment location. The exporter also still requires the converter path in `ExportCommand.cs` to be configured for your machine.
 
