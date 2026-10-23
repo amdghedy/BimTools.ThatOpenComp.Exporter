@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
- [ValidateSet("2020","2021","2022","2023","2024","2025","2026")]
- [string[]]$Versions=@("2020","2021","2022","2023","2024","2025","2026"),
+ [ValidateSet("2020","2021","2022","2023","2024","2025","2026","2027")]
+ [string[]]$Versions=@("2020","2021","2022","2023","2024","2025","2026","2027"),
  [string]$RevitInstallRoot="C:\Program Files\Autodesk",
  [string]$OutputRoot="",
  [switch]$ContinueOnError
@@ -18,6 +18,7 @@ $targets=@{
  "2024"=@{Framework="net48";RevitDir="Revit 2024";Label="Revit2024"}
  "2025"=@{Framework="net8.0-windows";RevitDir="Revit 2025";Label="Revit2025"}
  "2026"=@{Framework="net8.0-windows";RevitDir="Revit 2026";Label="Revit2026"}
+ "2027"=@{Framework="net10.0-windows";RevitDir="Revit 2027";Label="Revit2027"}
 }
 function Escape-Xml([string]$Value) { return [System.Security.SecurityElement]::Escape($Value) }
 $dotnetCommand=Get-Command dotnet -ErrorAction SilentlyContinue
