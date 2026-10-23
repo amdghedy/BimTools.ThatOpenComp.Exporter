@@ -1,0 +1,38 @@
+name: Build Revit Version Selector EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "tools/RevitVersionSelector/**"
+      - "scripts/Build-Version-Selector-EXE.ps1"
+      - ".github/workflows/build-version-selector.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  publish-selector:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish self-contained Windows x64 EXE
+        shell: pwsh
+        run: |
+          ./scripts/Build-Version-Selector-EXE.ps1
+
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RevitVersionSelector-win-x64
+          path: dist/RevitVersionSelector/RevitVersionSelector.exe
+          if-no-files-found: error
+          retention-days: 30
