@@ -27,7 +27,7 @@ jobs:
       - name: Publish self-contained Windows x64 EXE
         shell: pwsh
         run: |
-          ./"Source File"/scripts/Build-Version-Selector-EXE.ps1
+          & ".\Source File\scripts\Build-Version-Selector-EXE.ps1"
 
       - name: Upload EXE artifact
         uses: actions/upload-artifact@v4
