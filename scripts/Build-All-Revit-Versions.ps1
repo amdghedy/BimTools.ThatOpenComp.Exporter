@@ -8,7 +8,7 @@ param(
 )
 $ErrorActionPreference="Stop"
 $RepoRoot=Split-Path -Parent $PSScriptRoot
-if ([string]::IsNullOrWhiteSpace($OutputRoot)) { $OutputRoot=Join-Path $RepoRoot "artifacts" }
+if ([string]::IsNullOrWhiteSpace($OutputRoot)) { $OutputRoot=Join-Path $RepoRoot "00-Revit Versions" }
 $OutputRoot=[System.IO.Path]::GetFullPath($OutputRoot)
 $targets=@{
  "2020"=@{Framework="net472";RevitDir="Revit 2020";Label="Revit2020"}
@@ -29,7 +29,7 @@ foreach ($version in $Versions) {
  $revitDir=Join-Path $RevitInstallRoot $target.RevitDir
  $api=Join-Path $revitDir "RevitAPI.dll"
  $apiUi=Join-Path $revitDir "RevitAPIUI.dll"
- $versionOutput=Join-Path $OutputRoot $target.Label
+ $versionOutput=Join-Path (Join-Path $OutputRoot ("00-Revit "+$version)) "Build Output"
  Write-Host ""
  Write-Host "=== Revit $version / $($target.Framework) ===" -ForegroundColor Cyan
  if (!(Test-Path $api) -or !(Test-Path $apiUi)) {
