@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOC Fragment Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #1a1a2e; font-family: sans-serif; }
+    #viewport { width: 100vw; height: 100vh; display: block; }
+
+    #panel {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(255,255,255,0.95);
+      padding: 14px 18px; border-radius: 8px;
+      z-index: 10; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      min-width: 280px; max-width: 340px;
+    }
+    #panel h3 { font-size: 15px; margin-bottom: 4px; color: #1a1a2e; }
+    #panel p  { font-size: 12px; color: #555; margin-bottom: 10px; }
+    #file-input { font-size: 12px; width: 100%; cursor: pointer; }
+    #load-multiple {
+      margin-top: 6px; font-size: 11px; color: #888;
+    }
+
+    #status {
+      margin-top: 10px; font-size: 12px;
+      padding: 6px 8px; border-radius: 4px; display: none;
+    }
+    #status.show  { display: block; background: #f0f0f0; color: #333; }
+    #status.ok    { display: block; background: #d4edda; color: #155724; }
+    #status.error { display: block; background: #f8d7da; color: #721c24; }
+
+    #controls-hint {
+      margin-top: 10px; font-size: 10px;
+      color: #888; border-top: 1px solid #ddd; padding-top: 8px;
+    }
+  </style>
+
+  <!--
+    Import map: maps bare module specifiers to paths served by serve.js.
+    All packages come from the already-installed node_modules on disk.
+    No CDN, no internet required, no npm install needed again.
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three":                     "/node_modules/three/build/three.module.js",
+      "three/addons/":             "/node_modules/three/examples/jsm/",
+      "three/examples/jsm/":       "/node_modules/three/examples/jsm/",
+      "three/tsl":                 "/node_modules/three/build/three.tsl.js",
+      "three/webgpu":              "/node_modules/three/build/three.webgpu.js",
+      "three/src/":                "/node_modules/three/src/",
+      "camera-controls":           "/node_modules/camera-controls/dist/camera-controls.module.js",
+      "three-mesh-bvh":            "/node_modules/three-mesh-bvh/src/index.js",
+      "jszip":                     "/node_modules/jszip/dist/jszip.min.js",
+      "fast-xml-parser":           "/node_modules/fast-xml-parser/src/fxp.js",
+      "@thatopen/fragments":       "/node_modules/@thatopen/fragments/dist/index.mjs",
+      "@thatopen/components":      "/node_modules/@thatopen/components/dist/index.mjs",
+      "web-ifc":                   "/node_modules/web-ifc/web-ifc-api.js"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <canvas id="viewport"></canvas>
+
+  <div id="panel">
+    <h3>🧱 TOC Fragment Viewer</h3>
+    <p>Select one or more <code>.frag</code> files exported from Revit.</p>
+    <input type="file" id="file-input" accept=".frag" multiple />
+    <p id="load-multiple">Tip: hold Ctrl to select multiple files (host + links)</p>
+    <div id="status"></div>
+    <div id="controls-hint">
+      🖱 Left drag = rotate &nbsp;|&nbsp; Right drag = pan &nbsp;|&nbsp; Scroll = zoom
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE      from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { FragmentsModels } from "@thatopen/fragments";
+    import * as OBC        from "@thatopen/components";
+
+    // ── Status helper ───────────────────────────────────────────────────────
+    const statusEl = document.getElementById("status");
+    function setStatus(msg, cls = "show") {
+      statusEl.textContent = msg;
+      statusEl.className   = cls;
+    }
+
+    // ── Three.js: renderer, scene, camera ────────────────────────────────────
+    const canvas   = document.getElementById("viewport");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+
+    const scene  = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a2e);
+    scene.fog        = new THREE.Fog(0x1a1a2e, 200, 600);
+
+    const camera = new THREE.PerspectiveCamera(
+      60, window.innerWidth / window.innerHeight, 0.01, 2000
+    );
+    camera.position.set(30, 15, 30);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping   = true;
+    controls.dampingFactor   = 0.07;
+    controls.screenSpacePanning = false;
+
+    // ── Lighting ──────────────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.4);
+    sun.position.set(50, 100, 50);
+    sun.castShadow = true;
+    scene.add(sun);
+
+    // Grid
+    scene.add(new THREE.GridHelper(200, 80, 0x444466, 0x2a2a44));
+
+    // ── Render loop ───────────────────────────────────────────────────────────
+    renderer.setAnimationLoop(() => {
+      controls.update();
+      renderer.render(scene, camera);
+    });
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    const fragmentsManager = new FragmentsModels();
+
+    // Accumulate bounding box across all loaded models
+    const totalBox = new THREE.Box3();
+
+    // ── File input handler ─────────────────────────────────────────────────────
+    document.getElementById("file-input").addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      setStatus(`⏳ Loading ${files.length} file(s)…`);
+      let loaded = 0;
+
+      for (const file of files) {
+        try {
+          const buffer = await file.arrayBuffer();
+          const bytes  = new Uint8Array(buffer);
+
+          // fragmentsManager.load() handles pako decompression + FlatBuffers
+          // and returns a THREE.Group (FragmentsGroup) with all meshes attached
+          const model = await fragmentsManager.load(bytes, { modelId: file.name });
+          scene.add(model.object);
+
+          // Expand global bounding box
+          const modelBox = new THREE.Box3().setFromObject(model.object);
+          totalBox.union(modelBox);
+
+          loaded++;
+          setStatus(`⏳ Loaded ${loaded}/${files.length}: ${file.name}`);
+        } catch (err) {
+          console.error("Failed to load", file.name, err);
+          setStatus(`✖ Error loading ${file.name}: ${err.message}`, "error");
+        }
+      }
+
+      if (loaded > 0) {
+        // Fit camera to all loaded models
+        const center = new THREE.Vector3();
+        const size   = new THREE.Vector3();
+        totalBox.getCenter(center);
+        totalBox.getSize(size);
+        const maxDim = Math.max(size.x, size.y, size.z, 1);
+
+        camera.position.set(
+          center.x + maxDim * 1.6,
+          center.y + maxDim * 0.8,
+          center.z + maxDim * 1.6
+        );
+        controls.target.copy(center);
+        controls.update();
+
+        setStatus(
+          `✔ ${loaded} file(s) loaded successfully. ` +
+          `Model size: ${size.x.toFixed(1)} × ${size.y.toFixed(1)} × ${size.z.toFixed(1)} m`,
+          "ok"
+        );
+      }
+    });
+  </script>
+</body>
+</html>

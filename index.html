@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TOC Fragment Viewer</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { overflow: hidden; background: #1a1a2e; font-family: sans-serif; }
+      #app { width: 100vw; height: 100vh; }
+
+      #ui {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: rgba(255,255,255,0.92);
+        padding: 14px 18px;
+        border-radius: 8px;
+        z-index: 10;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        min-width: 260px;
+      }
+      #ui h3 { margin-bottom: 6px; font-size: 15px; color: #1a1a2e; }
+      #ui p  { font-size: 12px; color: #555; margin-bottom: 10px; }
+      #file-input { font-size: 12px; width: 100%; }
+
+      #status {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #333;
+        display: none;
+      }
+      #status.show { display: block; }
+      #status.error { color: crimson; }
+      #status.ok    { color: green; }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="ui">
+      <h3>TOC Fragment Viewer</h3>
+      <p>Select a <code>.frag</code> file exported from Revit.</p>
+      <input type="file" id="file-input" accept=".frag" />
+      <div id="status"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>TOCExporter</Name>
+    <Assembly>C:\Users\abdelrehem.mohamed\.gemini\antigravity\scratch\TOC_RevitExporter\Addin\bin\Debug\TOCExporter.dll</Assembly>
+    <AddInId>12345678-ABCD-1234-ABCD-1234567890AB</AddInId>
+    <FullClassName>TOCExporter.App</FullClassName>
+    <VendorId>DEV</VendorId>
+    <VendorDescription>Developer</VendorDescription>
+  </AddIn>
+</RevitAddIns>
