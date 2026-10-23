@@ -249,7 +249,7 @@ If Revit is installed in a non-default location, provide its common parent direc
 .\\scripts\\Build-All-Revit-Versions.ps1 -RevitInstallRoot "D:\\Autodesk" -ContinueOnError
 ```
 
-The script checks for that version's `RevitAPI.dll` and `RevitAPIUI.dll`, generates a temporary SDK-style project using the appropriate framework, builds the add-in, and writes version-specific outputs under `artifacts/Revit2020` through `artifacts/Revit2026`. Successful outputs include `TOCExporter.dll` and a generated `TOCExporter.addin` manifest. It also writes `artifacts/Build-Summary.csv`; versions whose API assemblies are missing are marked **SKIPPED** rather than falsely reported as built.
+The script checks for that version's `RevitAPI.dll` and `RevitAPIUI.dll`, generates a temporary SDK-style project using the appropriate framework, builds the add-in, and writes version-specific outputs under `00-Revit Versions/00-Revit 2020/Build Output` through `00-Revit Versions/00-Revit 2026/Build Output`. Successful outputs include `TOCExporter.dll` and a generated `TOCExporter.addin` manifest. It also writes `artifacts/Build-Summary.csv`; versions whose API assemblies are missing are marked **SKIPPED** rather than falsely reported as built.
 
 **Prerequisites:** install each Revit version you intend to build against, the .NET SDK, and (for Revit 2020–2024) the .NET Framework reference assemblies/targeting packs. The script may need internet access to restore the reference-assemblies NuGet package. Revit 2025 and 2026 require a .NET 8 SDK. Revit API DLLs are not bundled in this repository.
 
