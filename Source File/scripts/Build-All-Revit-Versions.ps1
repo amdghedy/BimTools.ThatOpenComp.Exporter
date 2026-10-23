@@ -7,7 +7,8 @@ param(
  [switch]$ContinueOnError
 )
 $ErrorActionPreference="Stop"
-$RepoRoot=Split-Path -Parent $PSScriptRoot
+$SourceRoot=Split-Path -Parent $PSScriptRoot
+$RepoRoot=Split-Path -Parent $SourceRoot
 if ([string]::IsNullOrWhiteSpace($OutputRoot)) { $OutputRoot=Join-Path $RepoRoot "00-Revit Versions" }
 $OutputRoot=[System.IO.Path]::GetFullPath($OutputRoot)
 $targets=@{
@@ -43,8 +44,8 @@ foreach ($version in $Versions) {
  $sourceRoot=Join-Path $buildRoot "src"
  New-Item -ItemType Directory -Path (Join-Path $sourceRoot "Properties") -Force | Out-Null
  try {
-  Copy-Item (Join-Path $RepoRoot "App.cs") $sourceRoot
-  Copy-Item (Join-Path $RepoRoot "ExportCommand.cs") $sourceRoot
+  Copy-Item (Join-Path $SourceRoot "App.cs") $sourceRoot
+  Copy-Item (Join-Path $SourceRoot "ExportCommand.cs") $sourceRoot
   Copy-Item (Join-Path $RepoRoot "Properties\AssemblyInfo.cs") (Join-Path $sourceRoot "Properties")
   $csprojPath=Join-Path $sourceRoot "TOCExporter.csproj"
   $framework=$target.Framework
