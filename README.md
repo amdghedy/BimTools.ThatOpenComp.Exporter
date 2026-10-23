@@ -214,6 +214,48 @@ The build script runs TypeScript checking and Vite bundling. The current `serve.
 - The converter path and the add-in assembly path in the checked-in manifest are machine-specific and should be made configurable before distributing the add-in to other users.
 - No automated test suite or CI workflow is currently documented in the repository. Build and validate with a representative host model and linked models before production use.
 
+
+## Multi-version Revit build targets (2020–2026)
+
+Version-specific target notes are organized under **`00-Revit Versions/`**. Each folder starts with `00-` and documents its expected Revit API directory, .NET target, and build command.
+
+| Revit version | Target framework | Default API directory |
+|---|---|---|
+| 2020 | .NET Framework 4.7.2 (`net472`) | `C:\\Program Files\\Autodesk\\Revit 2020` |
+| 2021 | .NET Framework 4.8 (`net48`) | `C:\\Program Files\\Autodesk\\Revit 2021` |
+| 2022 | .NET Framework 4.8 (`net48`) | `C:\\Program Files\\Autodesk\\Revit 2022` |
+| 2023 | .NET Framework 4.8 (`net48`) | `C:\\Program Files\\Autodesk\\Revit 2023` |
+| 2024 | .NET Framework 4.8 (`net48`) | `C:\\Program Files\\Autodesk\\Revit 2024` |
+| 2025 | .NET 8 for Windows (`net8.0-windows`) | `C:\\Program Files\\Autodesk\\Revit 2025` |
+| 2026 | .NET 8 for Windows (`net8.0-windows`) | `C:\\Program Files\\Autodesk\\Revit 2026` |
+
+### Build every installed version
+
+Use Windows PowerShell from a clone of this repository:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\Build-All-Revit-Versions.ps1 -ContinueOnError
+```
+
+Build one target only:
+
+```powershell
+.\\scripts\\Build-All-Revit-Versions.ps1 -Versions 2024
+```
+
+If Revit is installed in a non-default location, provide its common parent directory:
+
+```powershell
+.\\scripts\\Build-All-Revit-Versions.ps1 -RevitInstallRoot "D:\\Autodesk" -ContinueOnError
+```
+
+The script checks for that version's `RevitAPI.dll` and `RevitAPIUI.dll`, generates a temporary SDK-style project using the appropriate framework, builds the add-in, and writes version-specific outputs under `artifacts/Revit2020` through `artifacts/Revit2026`. Successful outputs include `TOCExporter.dll` and a generated `TOCExporter.addin` manifest. It also writes `artifacts/Build-Summary.csv`; versions whose API assemblies are missing are marked **SKIPPED** rather than falsely reported as built.
+
+**Prerequisites:** install each Revit version you intend to build against, the .NET SDK, and (for Revit 2020–2024) the .NET Framework reference assemblies/targeting packs. The script may need internet access to restore the reference-assemblies NuGet package. Revit 2025 and 2026 require a .NET 8 SDK. Revit API DLLs are not bundled in this repository.
+
+**Important:** this is a multi-version build scaffold, not proof that every version compiles or runs. The original exporter code was authored against Revit 2020 API references; API changes, runtime behavior, and IFC export behavior must be verified separately in each Revit version. The generated manifests point to the build output location, so copy/update the manifest and assembly paths for your final deployment location. The exporter also still requires the converter path in `ExportCommand.cs` to be configured for your machine.
+
+
 ## Repository
 
 - **Source:** https://github.com/amdghedy/BimTools.ThatOpenComp.Exporter
