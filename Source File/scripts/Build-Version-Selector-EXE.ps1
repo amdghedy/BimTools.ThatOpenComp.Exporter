@@ -1,8 +1,9 @@
 [CmdletBinding()]
 param([string]$OutputDirectory = "")
 $ErrorActionPreference = "Stop"
-$repoRoot = Split-Path -Parent $PSScriptRoot
-$project = Join-Path $repoRoot "tools\RevitVersionSelector\RevitVersionSelector.csproj"
+$sourceRoot = Split-Path -Parent $PSScriptRoot
+$repoRoot = Split-Path -Parent $sourceRoot
+$project = Join-Path $sourceRoot "tools\RevitVersionSelector\RevitVersionSelector.csproj"
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) { $OutputDirectory = Join-Path $repoRoot "dist\RevitVersionSelector" }
 $OutputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
 $dotnetCommand = Get-Command dotnet -ErrorAction SilentlyContinue
