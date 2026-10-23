@@ -278,3 +278,18 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\scripts\Build-Version
 ```
 
 The executable is created at `dist\RevitVersionSelector\RevitVersionSelector.exe`. This repository stores the source and publishing script; the EXE is not yet a checked-in or prebuilt binary. The launcher does not bundle Revit API assemblies or the SDK needed to compile the selected add-in. See [the selector README](tools/RevitVersionSelector/README.md).
+
+
+## Repository folder layout
+
+- `Source File/` contains the add-in source, Node.js converter and viewer, build scripts, and version-selector application source.
+- `00-Revit Versions/` stays at the repository root for version-specific build notes and build outputs.
+- `dist/RevitVersionSelector/` is created at the repository root when the EXE is published; generated binaries are not stored in `Source File/`.
+- `.github/` stays at the root so GitHub Actions can discover the workflow.
+
+Run build scripts from the repository root using their new paths, for example:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\\Source File\\scripts\\Build-All-Revit-Versions.ps1" -Versions 2027
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\\Source File\\scripts\\Build-Version-Selector-EXE.ps1"
+```
