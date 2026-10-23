@@ -46,7 +46,7 @@ foreach ($version in $Versions) {
  try {
   Copy-Item (Join-Path $SourceRoot "App.cs") $sourceRoot
   Copy-Item (Join-Path $SourceRoot "ExportCommand.cs") $sourceRoot
-  Copy-Item (Join-Path $RepoRoot "Properties\AssemblyInfo.cs") (Join-Path $sourceRoot "Properties")
+  Copy-Item (Join-Path $SourceRoot "Properties\AssemblyInfo.cs") (Join-Path $sourceRoot "Properties")
   $csprojPath=Join-Path $sourceRoot "TOCExporter.csproj"
   $framework=$target.Framework
   $apiEsc=Escape-Xml $api
