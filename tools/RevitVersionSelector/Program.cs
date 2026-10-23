@@ -136,8 +136,8 @@ internal sealed class MainForm : Form
             psi.ArgumentList.Add(selectedVersion);
 
             using var process = new Process { StartInfo = psi };
-            process.OutputDataReceived += (_, e) => { if (e.Data is not null) BeginInvoke(() => AppendLog(e.Data + Environment.NewLine)); };
-            process.ErrorDataReceived += (_, e) => { if (e.Data is not null) BeginInvoke(() => AppendLog("[stderr] " + e.Data + Environment.NewLine)); };
+            process.OutputDataReceived += (_, e) => { if (e.Data is not null) BeginInvoke(new Action(() => AppendLog(e.Data + Environment.NewLine))); };
+            process.ErrorDataReceived += (_, e) => { if (e.Data is not null) BeginInvoke(new Action(() => AppendLog("[stderr] " + e.Data + Environment.NewLine))); };
             process.Start();
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
