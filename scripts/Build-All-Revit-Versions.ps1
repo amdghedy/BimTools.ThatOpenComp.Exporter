@@ -69,7 +69,6 @@ foreach ($version in $Versions) {
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <OutputPath>$(MSBuildThisFileDirectory)bin\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RevitAPI"><HintPath>$apiEsc</HintPath><Private>false</Private></Reference>
